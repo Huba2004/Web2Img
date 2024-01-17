@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web2Img</title>
+    <style>
+        body {
+            font-family: Arial;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .kozepre {
+            text-align: center;
+        }
+
+        input, button {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="kozepre">
+        <h1>Web2Img</h1>
+        <input type="text" id="url" placeholder="Kérem az URL-t!" size="50">
+        <br>
+        <input type="number" id="szelesseg" placeholder="Szélesség" value="1920">
+        <input type="number" id="magassag" placeholder="Magasság" value="1080">
+        <br>
+        <button onclick="kepgen()">Kép generálása</button>
+        <br>
+        <img id="kep" src="" alt="" style="margin-top: 20px; max-width: 100%;">
+    </div>
+
+    <script>
+        async function kepgen() {
+            const url = document.getElementById('url').value;
+            const szelesseg = document.getElementById('szelesseg').value;
+            const magassag = document.getElementById('magassag').value;
+
+            if (!url) {
+                alert('Kérlek adj meg egy érvényes URL-t!');
+                return;
+            }
+            if (!szelesseg || !magassag) {
+                alert('Méretek megadása kötelező!');
+                return;
+            }
+            
+            try {
+                const generalas = await fetch(`/kep-generalas?url=${encodeURIComponent(url)}&szelesseg=${szelesseg}&magassag=${magassag}`);
+                const kepBlob = await generalas.blob();
+                const kepUrl = URL.createObjectURL(kepBlob);
+                const kep = document.getElementById('kep');
+                kep.src = kepUrl;
+                kep.style.display = 'block';
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>
